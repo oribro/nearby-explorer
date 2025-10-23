@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import SearchBar from "./components/SearchBar";
 import UseLocationButton from "./components/UseLocationButton";
 import POIList from "./components/POIList";

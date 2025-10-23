@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function UseLocationButton({ onUseLocation }) {
   async function handleClick() {
     if (!navigator.geolocation) {

@@ -1,3 +1,5 @@
+import React from "react";
+
 import POICard from "./POICard";
 
 export default function POIList({ results }) {
