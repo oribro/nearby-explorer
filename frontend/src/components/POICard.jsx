@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function POICard({ poi }) {
   return (
     <div className="border rounded-xl p-4 shadow-sm hover:shadow-md transition">
