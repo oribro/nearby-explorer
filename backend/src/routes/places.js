@@ -6,6 +6,7 @@ import {
 } from "../services/wikipedia.js";
 import { cache } from "../services/cache.js";
 import { haversine } from "../utils/distance.js";
+import { authenticateJWT } from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ const router = express.Router();
  *  - radius (optional, meters): default 5000
  *  - limit (optional): default 15
  */
-router.get("/search", async (req, res) => {
+router.get("/search", authenticateJWT, async (req, res) => {
   try {
     const { q, lat, lon } = req.query;
     const radius = parseInt(req.query.radius || "5000", 10);
