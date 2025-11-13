@@ -14,7 +14,7 @@ const MONGO_URI = process.env.MONGO_URI;
 const app = express();
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-url.netlify.app', 'https://your-frontend-url.vercel.app']
+    ? ['https://nearby-explorer.netlify.app']
     : 'http://localhost:5173',
   credentials: true
 }));
