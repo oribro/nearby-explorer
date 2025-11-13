@@ -9,7 +9,7 @@ export default function History({ onBack }) {
       try {
         const token = localStorage.getItem("jwt");
         const baseUrl = process.env.NODE_ENV === 'production' 
-          ? 'https://your-backend-url.onrender.com'
+          ? 'https://nearby-explorer.onrender.com'
           : 'http://localhost:5000';
         const res = await fetch(`${baseUrl}/api/history`, {
           headers: { Authorization: `Bearer ${token}` },
