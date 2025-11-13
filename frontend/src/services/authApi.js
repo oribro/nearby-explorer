@@ -1,4 +1,7 @@
-const BASE = "http://localhost:5000/api/auth";
+const BASE =
+  process.env.NODE_ENV === "production"
+    ? "https://nearby-explorer.onrender.com/api/auth"
+    : "http://localhost:5000/api/auth";
 
 export async function registerUser({ name, email, password }) {
   const res = await fetch(`${BASE}/register`, {
