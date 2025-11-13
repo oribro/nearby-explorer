@@ -1,6 +1,21 @@
 import React from "react";
+import { saveFavorite } from "../services/api";
 
 export default function POICard({ poi }) {
+  async function handleFavorite() {
+    try {
+      await saveFavorite(
+        poi.title,
+        poi.extract || "attraction",
+        poi.point?.lat || poi.lat,
+        poi.point?.lon || poi.lon
+      );
+      alert("Added to favorites!");
+    } catch (error) {
+      console.error("Failed to add favorite:", error);
+      alert("Failed to add to favorites");
+    }
+  }
   return (
     <div className="border rounded-xl p-4 shadow-sm hover:shadow-md transition flex gap-4">
       {poi.thumbnail && (
@@ -14,9 +29,17 @@ export default function POICard({ poi }) {
         <h3 className="font-semibold text-lg">{poi.title}</h3>
         <p className="text-sm text-gray-600 mb-1">{poi.extract || 'No description available'}</p>
         <p className="text-sm text-gray-500">{(poi.distance / 1000).toFixed(2)} km away</p>
-        <a href={poi.wikipediaUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 text-sm hover:underline">
-          View on Wikipedia
-        </a>
+        <div className="flex gap-2 items-center">
+          <a href={poi.wikipediaUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 text-sm hover:underline">
+            View on Wikipedia
+          </a>
+          <button
+            onClick={handleFavorite}
+            className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
+          >
+            ❤️ Favorite
+          </button>
+        </div>
       </div>
     </div>
   );

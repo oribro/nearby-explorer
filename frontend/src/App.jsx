@@ -6,7 +6,11 @@ import POIList from "./components/POIList";
 import Spinner from "./components/Spinner";
 import RegisterForm from "./components/RegisterForm";
 import LoginForm from "./components/LoginForm";
-import { searchPlacesByText, searchPlacesByCoords } from "./services/api";
+import HamburgerMenu from "./components/HamburgerMenu";
+import Favourites from "./components/Favourites";
+import History from "./components/History";
+import Map from "./components/Map";
+import { searchPlacesByText, searchPlacesByCoords, saveSearchHistory } from "./services/api";
 
 export default function App() {
   const [results, setResults] = useState([]);
@@ -15,6 +19,8 @@ export default function App() {
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [user, setUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState("home");
+  const [searchCenter, setSearchCenter] = useState(null);
 
   // check for JWT in localStorage on mount
   useEffect(() => {
@@ -32,14 +38,27 @@ export default function App() {
 
       let data;
       if (lat && lon) {
+        setSearchCenter([lat, lon]);
         data = await searchPlacesByCoords(lat, lon);
       } else if (q) {
+        setSearchCenter(null);
         data = await searchPlacesByText(q);
       } else {
         throw new Error("No search input provided");
       }
 
       setResults(data);
+      
+      // Save search history
+      try {
+        const searchQuery = q || "Location search";
+        const searchType = lat && lon ? "location" : "text";
+        console.log('Saving history:', { searchQuery, searchType, resultsCount: data.length });
+        await saveSearchHistory(searchQuery, searchType, data.length);
+        console.log('History saved successfully');
+      } catch (historyError) {
+        console.error("Failed to save search history:", historyError);
+      }
     } catch (err) {
        if (err.message.includes("401")) {
         setError("You must be logged in to search");
@@ -78,12 +97,12 @@ export default function App() {
           <h1 className="text-3xl font-bold text-gray-800">Nearby Explorer</h1>
           <div className="flex gap-2">
             {user ? (
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 text-white px-3 py-1 rounded"
-              >
-                Logout
-              </button>
+              <HamburgerMenu 
+                user={user} 
+                onLogout={handleLogout}
+                onShowFavourites={() => setCurrentPage("favourites")}
+                onShowHistory={() => setCurrentPage("history")}
+              />
             ) : (
               <>
                 <button
@@ -103,17 +122,27 @@ export default function App() {
           </div>
         </div>
 
-        {/* Only show search if logged in */}
+        {/* Only show content if logged in */}
         {user && (
           <>
-            <div className="flex gap-2 mb-4">
-              <SearchBar onSearch={handleSearch} />
-              <UseLocationButton onUseLocation={handleSearch} />
-            </div>
-
-            {loading && <Spinner />}
-            {error && <p className="text-red-500">{error}</p>}
-            <POIList results={results} />
+            {currentPage === "home" && (
+              <>
+                <div className="flex gap-2 mb-4">
+                  <SearchBar onSearch={handleSearch} />
+                  <UseLocationButton onUseLocation={handleSearch} />
+                </div>
+                {loading && <Spinner />}
+                {error && <p className="text-red-500">{error}</p>}
+                {results.length > 0 && <Map places={results} searchCenter={searchCenter} />}
+                <POIList results={results} />
+              </>
+            )}
+            {currentPage === "favourites" && (
+              <Favourites onBack={() => setCurrentPage("home")} />
+            )}
+            {currentPage === "history" && (
+              <History onBack={() => setCurrentPage("home")} />
+            )}
           </>
         )}
 
