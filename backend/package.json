@@ -2,9 +2,9 @@
   "name": "nearby-explorer-backend",
   "version": "1.0.0",
   "type": "module",
-  "main": "src/server.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node src/app.js",
     "dev": "nodemon src/server.js"
   },
   "dependencies": {
