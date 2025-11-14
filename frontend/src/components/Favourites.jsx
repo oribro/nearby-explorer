@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { deleteFavorite } from "../services/api";
+import Toast from "./Toast";
 
 export default function Favourites({ onBack }) {
   const [favourites, setFavourites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState(null);
 
   async function handleUnfavorite(favoriteId) {
     try {
       await deleteFavorite(favoriteId);
       setFavourites(favourites.filter(fav => fav._id !== favoriteId));
+      setToast({ message: "Removed from favorites!", type: "success" });
     } catch (error) {
       console.error("Failed to remove favorite:", error);
+      setToast({ message: "Failed to remove favorite", type: "error" });
     }
   }
 
@@ -65,6 +69,15 @@ export default function Favourites({ onBack }) {
               </button>
             </div>
           ))}
+        </div>
+      )}
+      {toast && (
+        <div className="fixed bottom-20 right-4 z-[9999]">
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
         </div>
       )}
     </div>
