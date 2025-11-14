@@ -71,3 +71,19 @@ export async function saveFavorite(placeName, placeType, latitude, longitude) {
   if (!res.ok) throw new Error("Failed to save favorite");
   return res.json();
 }
+
+export async function deleteFavorite(favoriteId) {
+  const baseUrl =
+    process.env.NODE_ENV === "production"
+      ? "https://nearby-explorer.onrender.com"
+      : "http://localhost:5000";
+  const res = await fetch(`${baseUrl}/api/favourites/${favoriteId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      ...getAuthHeaders(),
+    },
+  });
+  if (!res.ok) throw new Error("Failed to delete favorite");
+  return res.json();
+}

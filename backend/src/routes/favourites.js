@@ -30,4 +30,13 @@ router.post("/", authenticateJWT, async (req, res) => {
   }
 });
 
+router.delete("/:id", authenticateJWT, async (req, res) => {
+  try {
+    await Favourite.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    res.json({ message: "Favourite removed" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

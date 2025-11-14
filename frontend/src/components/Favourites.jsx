@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { deleteFavorite } from "../services/api";
 
 export default function Favourites({ onBack }) {
   const [favourites, setFavourites] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  async function handleUnfavorite(favoriteId) {
+    try {
+      await deleteFavorite(favoriteId);
+      setFavourites(favourites.filter(fav => fav._id !== favoriteId));
+    } catch (error) {
+      console.error("Failed to remove favorite:", error);
+    }
+  }
 
   useEffect(() => {
     async function fetchFavourites() {
@@ -39,12 +49,20 @@ export default function Favourites({ onBack }) {
       ) : (
         <div className="space-y-3">
           {favourites.map((fav) => (
-            <div key={fav._id} className="border rounded-lg p-4">
-              <h3 className="font-semibold">{fav.placeName}</h3>
-              <p className="text-sm text-gray-600 capitalize">{fav.placeType}</p>
-              <p className="text-xs text-gray-500">
-                {fav.latitude.toFixed(4)}, {fav.longitude.toFixed(4)}
-              </p>
+            <div key={fav._id} className="border rounded-lg p-4 flex justify-between items-start">
+              <div>
+                <h3 className="font-semibold">{fav.placeName}</h3>
+                <p className="text-sm text-gray-600 capitalize">{fav.placeType}</p>
+                <p className="text-xs text-gray-500">
+                  {fav.latitude.toFixed(4)}, {fav.longitude.toFixed(4)}
+                </p>
+              </div>
+              <button
+                onClick={() => handleUnfavorite(fav._id)}
+                className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
+              >
+                💔 Remove
+              </button>
             </div>
           ))}
         </div>
