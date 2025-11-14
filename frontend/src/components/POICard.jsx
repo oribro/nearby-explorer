@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { saveFavorite } from "../services/api";
+import Toast from "./Toast";
 
 export default function POICard({ poi }) {
+  const [toast, setToast] = useState(null);
+
   async function handleFavorite() {
     try {
       await saveFavorite(
@@ -10,10 +13,10 @@ export default function POICard({ poi }) {
         poi.point?.lat || poi.lat,
         poi.point?.lon || poi.lon
       );
-      alert("Added to favorites!");
+      setToast({ message: "Added to favorites!", type: "success" });
     } catch (error) {
       console.error("Failed to add favorite:", error);
-      alert("Failed to add to favorites");
+      setToast({ message: "Failed to add to favorites", type: "error" });
     }
   }
   return (
@@ -41,6 +44,13 @@ export default function POICard({ poi }) {
           </button>
         </div>
       </div>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

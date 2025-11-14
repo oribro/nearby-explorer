@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
+import Toast from "./Toast";
 
 export default function UseLocationButton({ onUseLocation }) {
+  const [toast, setToast] = useState(null);
+
   async function handleClick() {
     if (!navigator.geolocation) {
-      alert("Geolocation not supported");
+      setToast({ message: "Geolocation not supported", type: "error" });
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -12,17 +15,26 @@ export default function UseLocationButton({ onUseLocation }) {
         onUseLocation({ lat: latitude, lon: longitude });
       },
       (err) => {
-        alert("Location permission denied or error: " + err.message);
+        setToast({ message: `Location permission denied: ${err.message}`, type: "error" });
       }
     );
   }
 
   return (
-    <button
-      onClick={handleClick}
-      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-    >
-      📍 Use My Location
-    </button>
+    <>
+      <button
+        onClick={handleClick}
+        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+      >
+        📍 Use My Location
+      </button>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+    </>
   );
 }
