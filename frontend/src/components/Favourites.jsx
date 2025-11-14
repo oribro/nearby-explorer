@@ -72,13 +72,12 @@ export default function Favourites({ onBack }) {
         </div>
       )}
       {toast && (
-        <div className="fixed bottom-20 right-4 z-[9999]">
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
-          />
-        </div>
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+          className="fixed bottom-20 right-4 z-[9999]"
+        />
       )}
     </div>
   );
